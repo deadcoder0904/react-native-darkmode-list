@@ -46,6 +46,7 @@ class App extends React.Component {
 						<View style={styles.formWrapper}>
 							<Text style={styles.label}>Name</Text>
 							<Input
+								autoCapitalize="none"
 								ref={this.inputName}
 								value={name}
 								onChangeText={this._onChangeName}
@@ -56,6 +57,7 @@ class App extends React.Component {
 
 							<Text style={styles.label}>URL</Text>
 							<Input
+								autoCapitalize="none"
 								value={link}
 								onChangeText={this._onChangeLink}
 								inputStyle={styles.input}
