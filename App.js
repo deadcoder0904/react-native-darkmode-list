@@ -93,17 +93,18 @@ class App extends React.Component {
               <Mutation
                 mutation={CREATE_APP}
                 optimisticResponse={{
-                  __typename: "Mutation",
+                  __typename: "AppConnection",
                   createApp: {
                     __typename: "App",
-                    id: uuid(),
+                    id: Math.round(Math.random() * -1000000),
                     name,
                     link
                   }
                 }}
                 update={(cache, { data: { createApp } }) => {
                   const data = cache.readQuery({ query: LIST_APPS });
-                  data.listApps.items.push(createApp);
+                  if (typeof createApp.id === "number")
+                    data.listApps.items.push(createApp);
                   cache.writeQuery({
                     query: LIST_APPS,
                     data
