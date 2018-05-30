@@ -11,12 +11,11 @@ import {
 import { Button, Input, Text, ListItem } from "react-native-elements";
 import AWSAppSyncClient from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
-import { ApolloProvider, Query, Mutation, Subscription } from "react-apollo";
+import { ApolloProvider, Query, Mutation } from "react-apollo";
 import uuid from "uuid/v4";
 
 import CREATE_APP from "./src/mutations/CreateApp";
 import LIST_APPS from "./src/queries/ListApps";
-import NEW_APP from "./src/subscriptions/NewApp";
 
 import appSyncConfig from "./AppSync";
 
@@ -29,6 +28,7 @@ const client = new AWSAppSyncClient({
   }
 });
 
+const negativeRandom = () => Math.round(Math.random() * -1000000);
 const Loading = () => <ActivityIndicator size="large" color="#fff" />;
 const Error = ({ text }) => (
   <Text h4 style={[styles.error, styles.centerText]}>
@@ -96,7 +96,7 @@ class App extends React.Component {
                   __typename: "AppConnection",
                   createApp: {
                     __typename: "App",
-                    id: Math.round(Math.random() * -1000000),
+                    id: negativeRandom(),
                     name,
                     link
                   }
@@ -154,16 +154,6 @@ class App extends React.Component {
                   return (
                     <React.Fragment>
                       {data.listApps.items.map(renderLI)}
-                      <Subscription subscription={NEW_APP}>
-                        {({ loading, error, data }) => {
-                          if (loading) return null;
-                          if (error)
-                            return (
-                              <Error text="Error subscribing to new app" />
-                            );
-                          return renderLI(data.onCreateApp, 0);
-                        }}
-                      </Subscription>
                     </React.Fragment>
                   );
                 }}
