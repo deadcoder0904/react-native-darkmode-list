@@ -28,7 +28,6 @@ const client = new AWSAppSyncClient({
   }
 });
 
-const negativeRandom = () => Math.round(Math.random() * -1000000);
 const Loading = () => <ActivityIndicator size="large" color="#fff" />;
 const Error = ({ text }) => (
   <Text h4 style={[styles.error, styles.centerText]}>
@@ -91,20 +90,20 @@ class App extends React.Component {
             </Text>
             <View style={styles.formWrapper}>
               <Mutation
+                fetchPolicy="cache-and-network"
                 mutation={CREATE_APP}
                 optimisticResponse={{
-                  __typename: "AppConnection",
+                  __typename: "Mutation",
                   createApp: {
                     __typename: "App",
-                    id: negativeRandom(),
+                    id: uuid(),
                     name,
                     link
                   }
                 }}
                 update={(cache, { data: { createApp } }) => {
                   const data = cache.readQuery({ query: LIST_APPS });
-                  if (typeof createApp.id === "number")
-                    data.listApps.items.push(createApp);
+                  data.listApps.items.push(createApp);
                   cache.writeQuery({
                     query: LIST_APPS,
                     data
